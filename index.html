@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dice Roller</title>
+    <meta charset="UTF-8">
+    <meta name="Dice Roller-Offline-True Random Rolls" content="Single Page Offline App" />
+    <meta name="description" content="Dice Roller-True Random-Rolls-3D-Animated-No Ads/Trackers." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="HTML, CSS, JavaScript" />
+    <!-- <link rel="icon" type="image/png" href="favicon.png"> -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Dice Roller</title>
+    <style>
+        body {
+            background-color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .dice-container {
+            perspective: 1000px; /* Enables 3D perspective */
+        }
+
+        .dice {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d; /* Enables 3D transformations */
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            transition: transform var(--speed, 0.5s) ease-in-out; /* Dynamic speed */
+        }
+
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: #444;
+            border: 2px solid #555;
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dot {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #4CDCBF;
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Positioning each face of the cube */
+        .front { transform: translateZ(100px); }
+        .back { transform: rotateY(180deg) translateZ(100px); }
+        .right { transform: rotateY(90deg) translateZ(100px); }
+        .left { transform: rotateY(-90deg) translateZ(100px); }
+        .top { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        /* Hamburger menu */
+        .menu-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .menu-icon div {
+            width: 30px;
+            height: 4px;
+            background-color: #fff;
+            margin: 5px 0;
+        }
+
+        /* Popup container */
+        .popup {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: #444;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none; /* Hidden by default */
+        }
+
+        .popup input[type="range"] {
+            width: 150px; /* Slider width */
+        }
+
+        button {
+            display: none; /* No button needed */
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger menu -->
+    <div class="menu-icon" id="menuIcon">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Popup for sliders and color picker -->
+    <div class="popup" id="popup">
+        <label for="speedSlider" style="color:white;">Speed:</label>
+        <input type="range" id="speedSlider" min="0" max="10" value="9">
+        <span id="speedValue" style="color:white;">Speed: 09</span>
+        <br><br>
+        <label for="radiusSlider" style="color:white;">Dot Radius:</label>
+        <input type="range" id="radiusSlider" min="5" max="50" value="35">
+        <span id="radiusValue" style="color:white;">Radius: 35px</span>
+        <br><br>
+        <label for="borderRadiusSlider" style="color:white;">Face Border Radius:</label>
+        <input type="range" id="borderRadiusSlider" min="0" max="50" value="50">
+        <span id="borderRadiusValue" style="color:white;">Border Radius: 50px</span>
+        <br><br>
+        <label for="colorPicker" style="color:white;">Dot Color:</label>
+        <input type="color" id="colorPicker" value="#4CDCBF">
+    </div>
+
+    <div class="dice-container">
+        <div class="dice" id="dice">
+            <!-- Front face (1 dot) -->
+            <div class="face front" >
+                <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%); "></div>
+            </div>
+
+            <!-- Back face (6 dots) -->
+            <div class="face back" >
+                <div class="dot" style="top: 25%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 25%; left: 50%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 25%; left: 75%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 50%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 75%; transform: translate(-50%, -50%); "></div>
+            </div>
+
+            <!-- Right face (3 dots) -->
+            <div class="face right" >
+                <div class="dot" style="top: 25%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 75%; transform: translate(-50%, -50%); "></div>
+            </div>
+
+            <!-- Left face (4 dots) -->
+            <div class="face left" >
+                <div class="dot" style="top: 25%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 25%; left: 75%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 75%; transform: translate(-50%, -50%); "></div>
+            </div>
+
+            <!-- Top face (5 dots) -->
+            <div class="face top" >
+                <div class="dot" style="top: 20%; left: 20%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 20%; left: 80%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 80%; left: 20%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 80%; left: 80%; transform: translate(-50%, -50%); "></div>
+            </div>
+
+            <!-- Bottom face (2 dots) -->
+            <div class="face bottom" >
+                <div class="dot" style="top: 25%; left: 25%; transform: translate(-50%, -50%); "></div>
+                <div class="dot" style="top: 75%; left: 75%; transform: translate(-50%, -50%); "></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dice = document.getElementById('dice');
+            const menuIcon = document.getElementById('menuIcon');
+            const popup = document.getElementById('popup');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValueLabel = document.getElementById('speedValue');
+            const radiusSlider = document.getElementById('radiusSlider');
+            const radiusValueLabel = document.getElementById('radiusValue');
+            const borderRadiusSlider = document.getElementById('borderRadiusSlider');
+            const borderRadiusValueLabel = document.getElementById('borderRadiusValue');
+            const colorPicker = document.getElementById('colorPicker');
+
+            // Toggle popup visibility
+            menuIcon.addEventListener('click', function () {
+                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Adjust rotation speed based on slider value
+            speedSlider.addEventListener('input', function () {
+                const speedValue = speedSlider.value;
+                dice.style.setProperty('--speed', `${speedValue / 10}s`);
+                speedValueLabel.innerText = `Speed: ${speedValue}`;
+            });
+
+            // Initialize speed value label
+            speedValueLabel.innerText = `Speed: ${speedSlider.value}`;
+
+            // Adjust dot radius based on slider value
+            radiusSlider.addEventListener('input', function () {
+                const radiusValue = radiusSlider.value;
+                radiusValueLabel.innerText = `Radius: ${radiusValue}px`;
+                const dots = dice.querySelectorAll('.dot');
+                for (let dot of dots) {
+                    dot.style.width = `${radiusValue}px`;
+                    dot.style.height = `${radiusValue}px`;
+                }
+            });
+
+            // Initialize radius value label
+            radiusValueLabel.innerText = `Radius: ${radiusSlider.value}px`;
+
+            // Adjust face border radius based on slider value
+            borderRadiusSlider.addEventListener('input', function () {
+                const borderRadiusValue = borderRadiusSlider.value;
+                borderRadiusValueLabel.innerText = `Border Radius: ${borderRadiusValue}px`;
+                const faces = dice.children;
+                for (let face of faces) {
+                    face.style.borderRadius = `${borderRadiusValue}px`;
+                }
+            });
+
+            // Initialize border radius value label
+            borderRadiusValueLabel.innerText = `Border Radius: ${borderRadiusSlider.value}px`;
+
+            // Adjust dot color based on color picker value
+            colorPicker.addEventListener('input', function () {
+                const colorValue = colorPicker.value;
+                const dots = dice.querySelectorAll('.dot');
+                for (let dot of dots) {
+                    dot.style.background = colorValue;
+                }
+            });
+
+            document.addEventListener('click', function () {
+                // Generate random rotation angles and axes
+                const angleX = 720; // Consistent rotation
+                const angleY = 720; // Consistent rotation
+                const angleZ = 720; // Consistent rotation
+
+                // Align a face to the viewer after rolling
+                const finalFace = Math.floor(Math.random() * 6);
+                let finalRotation = '';
+
+                switch (finalFace) {
+                    case 0: // Front face
+                        finalRotation = 'rotateX(0deg) rotateY(0deg)';
+                        break;
+                    case 1: // Back face
+                        finalRotation = 'rotateX(0deg) rotateY(180deg)';
+                        break;
+                    case 2: // Right face
+                        finalRotation = 'rotateX(0deg) rotateY(90deg)';
+                        break;
+                    case 3: // Left face
+                        finalRotation = 'rotateX(0deg) rotateY(-90deg)';
+                        break;
+                    case 4: // Top face
+                        finalRotation = 'rotateX(90deg) rotateY(0deg)';
+                        break;
+                    case 5: // Bottom face
+                        finalRotation = 'rotateX(-90deg) rotateY(0deg)';
+                        break;
+                }
+
+                // Apply the rotation to the dice in two steps for smoother transition
+                dice.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) rotateZ(${angleZ}deg)`;
+                setTimeout(function() {
+                    // Gradually slow down the rotation
+                    dice.style.transitionDuration = `${speedSlider.value / 5}s`;
+                    dice.style.transform = finalRotation;
+                }, parseInt(speedSlider.value * 100)); // Adjusted animation duration
+            });
+
+            // For mobile devices, listen for touch events as well
+            document.addEventListener('touchstart', function () {
+                // Generate random rotation angles and axes
+                const angleX = 720; // Consistent rotation
+                const angleY = 720; // Consistent rotation
+                const angleZ = 720; // Consistent rotation
+
+                // Align a face to the viewer after rolling
+                const finalFace = Math.floor(Math.random() * 6);
+                let finalRotation = '';
+
+                switch (finalFace) {
+                    case 0: // Front face
+                        finalRotation = 'rotateX(0deg) rotateY(0deg)';
+                        break;
+                    case 1: // Back face
+                        finalRotation = 'rotateX(0deg) rotateY(180deg)';
+                        break;
+                    case 2: // Right face
+                        finalRotation = 'rotateX(0deg) rotateY(90deg)';
+                        break;
+                    case 3: // Left face
+                        finalRotation = 'rotateX(0deg) rotateY(-90deg)';
+                        break;
+                    case 4: // Top face
+                        finalRotation = 'rotateX(90deg) rotateY(0deg)';
+                        break;
+                    case 5: // Bottom face
+                        finalRotation = 'rotateX(-90deg) rotateY(0deg)';
+                        break;
+                }
+
+                // Apply the rotation to the dice in two steps for smoother transition
+                dice.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) rotateZ(${angleZ}deg)`;
+                setTimeout(function() {
+                    // Gradually slow down the rotation
+                    dice.style.transitionDuration = `${speedSlider.value / 5}s`;
+                    dice.style.transform = finalRotation;
+                }, parseInt(speedSlider.value * 100)); // Adjusted animation duration
+            });
+        });
+    </script>
+</body>
+</html>
